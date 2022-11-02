@@ -53,19 +53,19 @@ vector_size = 832
 
 def DNN(): ##deep neural network with two drugs' features as input and their interation classes as outputs
 
-    # train_input = Input(shape=(vector_size * 2,), name='Inputlayer') #输入层 vector_size=572
-    train_input = Input(shape=(130,), name='Inputlayer') #药物嵌入是65列时，为129，当为100维度时，设置200  attention sdcn is 128 ,the others is 100*2
-    # train_input = Input(shape=(256,), name='Inputlayer') #药物嵌入是65列
-    # train_input = Input(shape=(572,130), name='Inputlayer')  # 输入层 572*2
-    train_in = Dense(512, activation='relu')(train_input)  #train_input输入，没有作为Dense（X...）参数
-    train_in = BatchNormalization()(train_in) #批量标准化层（）
+    # train_input = Input(shape=(vector_size * 2,), name='Inputlayer') # vector_size=572
+    train_input = Input(shape=(130,), name='Inputlayer') #attention sdcn is 128 ,the others is 100*2
+    # train_input = Input(shape=(256,), name='Inputlayer') #
+    # train_input = Input(shape=(572,130), name='Inputlayer')  #  572*2
+    train_in = Dense(512, activation='relu')(train_input)  #train_input Dense（X...)
+    train_in = BatchNormalization()(train_in)
     train_in = Dropout(droprate)(train_in)
-    train_in = Dense(256, activation='relu')(train_in) #全连接层，用relu做激活函数
+    train_in = Dense(256, activation='relu')(train_in) 
     train_in = BatchNormalization()(train_in)
     train_in = Dropout(droprate)(train_in)
     train_in = Dense(event_num)(train_in)
-    out = Activation('softmax')(train_in) #输出用softmax作多分类
-    model = Model(train_input, out) #input=train_input, output=out 用交叉损失来训练，不像机器学习中多分类
+    out = Activation('softmax')(train_in) 
+    model = Model(train_input, out) 
     model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
     return model
@@ -85,8 +85,8 @@ class AE(nn.Module): ##Aotoencoder one drug's features outputting the layers of 
     def forward(self, x):
         enc_h1 = F.relu(self.enc_1(x))
         enc_h2 = F.relu(self.enc_2(enc_h1))
-        z = self.z_layer(enc_h2)  # 编码 3
-        dec_h1 = F.relu(self.dec_1(z))  # 解码
+        z = self.z_layer(enc_h2)  
+        dec_h1 = F.relu(self.dec_1(z)) 
         dec_h2 = F.relu(self.dec_2(dec_h1))
         x_bar = self.x_bar_layer(dec_h2)
         return x_bar, enc_h1, enc_h2, z
@@ -178,7 +178,7 @@ def roc_aupr_score(y_true, y_score, average="macro"):
         for c in range(n_classes):
             y_true_c = y_true.take([c], axis=1).ravel()
             y_score_c = y_score.take([c], axis=1).ravel()
-            score[c] = binary_metric(y_true_c, y_score_c)  # 把每一类进行求精度得分，然后再求平均
+            score[c] = binary_metric(y_true_c, y_score_c)
         return np.average(score)
     return _average_binary_score(_binary_roc_aupr_score, y_true, y_score, average)
 
